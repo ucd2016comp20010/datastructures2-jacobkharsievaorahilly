@@ -22,7 +22,8 @@ public class SinglyLinkedList<E> implements List<E> {
          * @param n reference to a node that should follow the new node
          */
         public Node(E e, Node<E> n) {
-            // TODO
+            this.element = e;
+            this.next = n;
         }
 
         // Accessor methods
@@ -33,7 +34,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @return the element stored at the node
          */
         public E getElement() {
-            return null;
+            return element;
         }
 
         /**
@@ -42,8 +43,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @return the following node
          */
         public Node<E> getNext() {
-            // TODO
-            return null;
+            return next;
         }
 
         // Modifier methods
@@ -54,7 +54,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @param n the node that should follow this one
          */
         public void setNext(Node<E> n) {
-            // TODO
+            this.next = n;
         }
     } //----------- end of nested Node class -----------
 
@@ -72,56 +72,105 @@ public class SinglyLinkedList<E> implements List<E> {
     public SinglyLinkedList() {
     }              // constructs an initially empty list
 
-    //@Override
+    @Override
     public int size() {
-        // TODO
-        return 0;
+        return size;
     }
 
-    //@Override
+    @Override
     public boolean isEmpty() {
-        // TODO
-        return false;
+        return size == 0;
     }
 
     @Override
     public E get(int position) {
-        // TODO
-        return null;
+        if (position < 0 || position >= size) return null;
+        Node<E> curr = head;
+        for (int i = 0; i < position; i++) {
+            curr = curr.getNext();
+        }
+        return curr.getElement();
     }
 
     @Override
     public void add(int position, E e) {
-        // TODO
+        if (position <= 0) {
+            addFirst(e);
+        } else if (position >= size) {
+            addLast(e);
+        } else {
+            Node<E> prev = head;
+            for (int i = 0; i < position - 1; i++) {
+                prev = prev.getNext();
+            }
+            // insert the new node between prev and prev.next
+            Node<E> newNode = new Node<>(e, prev.getNext());
+            prev.setNext(newNode);
+            size++;
+        }
     }
 
 
     @Override
     public void addFirst(E e) {
-        // TODO
+        head = new Node<>(e, head);
+        size++;
     }
 
     @Override
     public void addLast(E e) {
-        // TODO
+        if (isEmpty()) {
+            addFirst(e);
+        } else {
+            Node<E> curr = head;
+            while (curr.getNext() != null) {
+                curr = curr.getNext();
+            }
+            curr.setNext(new Node<>(e, null));
+            size++;
+        }
     }
 
     @Override
     public E remove(int position) {
-        // TODO
-        return null;
+        if (position < 0 || position >= size) return null;
+        if (position == 0) return removeFirst();
+        if (position == size - 1) return removeLast();
+
+        Node<E> prev = head;
+        for (int i = 0; i < position - 1; i++) {
+            prev = prev.getNext();
+        }
+        E res = prev.getNext().getElement();
+        // Skip over the node to remove it from the chain
+        prev.setNext(prev.getNext().getNext());
+        size--;
+        return res;
     }
 
     @Override
     public E removeFirst() {
-        // TODO
-        return null;
+        if (isEmpty()) return null;
+        E res = head.getElement();
+        head = head.getNext();
+        size--;
+        return res;
     }
 
     @Override
     public E removeLast() {
-        // TODO
-        return null;
+        if (isEmpty()) return null;
+        if (size == 1) return removeFirst();
+
+        Node<E> curr = head;
+        // stop at second-to-last node
+        while (curr.getNext().getNext() != null) {
+            curr = curr.getNext();
+        }
+        E res = curr.getNext().getElement();
+        curr.setNext(null);
+        size--;
+        return res;
     }
 
     //@Override

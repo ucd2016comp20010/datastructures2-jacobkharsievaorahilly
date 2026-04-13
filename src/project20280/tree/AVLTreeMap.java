@@ -31,31 +31,43 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      * Returns the height of the given tree position.
      */
     protected int height(Position<Entry<K, V>> p) {
-        // TODO
-        return 0;
+        return tree.getAux(p);
     }
 
     /**
      * Recomputes the height of the given position based on its children's heights.
      */
     protected void recomputeHeight(Position<Entry<K, V>> p) {
-        // TODO
+        int leftH = height(left(p));
+        int rightH = height(right(p));
+        int bigger;
+        if (leftH > rightH) {
+            bigger = leftH;
+        } else {
+            bigger = rightH;
+        }
+        tree.setAux(p, 1 + bigger);
     }
 
     /**
      * Returns whether a position has balance factor between -1 and 1 inclusive.
      */
     protected boolean isBalanced(Position<Entry<K, V>> p) {
-        // TODO
-        return false;
+        int diff = height(left(p)) - height(right(p));
+        return diff >= -1 && diff <= 1;
     }
 
     /**
      * Returns a child of p with height no smaller than that of the other child.
      */
     protected Position<Entry<K, V>> tallerChild(Position<Entry<K, V>> p) {
-        // TODO
-        return null;
+        int leftH = height(left(p));
+        int rightH = height(right(p));
+        if (leftH > rightH) return left(p);
+        if (rightH > leftH) return right(p);
+        if (isRoot(p)) return left(p);
+        if (p == left(parent(p))) return left(p);
+        return right(p);
     }
 
     /**
@@ -64,7 +76,20 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      * imbalance is found, continuing until balance is restored.
      */
     protected void rebalance(Position<Entry<K, V>> p) {
-        // TODO
+        int oldHeight = 0;
+        int newHeight = 0;
+        do {
+            oldHeight = height(p);
+            if (!isBalanced(p)) {
+                Position<Entry<K, V>> x = tallerChild(tallerChild(p));
+                p = restructure(x);
+                recomputeHeight(left(p));
+                recomputeHeight(right(p));
+            }
+            recomputeHeight(p);
+            newHeight = height(p);
+            p = parent(p);
+        } while (oldHeight != newHeight && p != null);
     }
 
     /**
@@ -80,7 +105,13 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     @Override
     protected void rebalanceDelete(Position<Entry<K, V>> p) {
-        // TODO
+        if (!isRoot(p)) {
+            rebalance(parent(p));
+        }
+    }
+
+    public String toString() {
+        return tree.toString();
     }
 
     /**
@@ -119,6 +150,5 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
 
         avl.remove(5);
         System.out.println(avl.toBinaryTreeString());
-
     }
 }
