@@ -39,18 +39,7 @@ public class TreapMap<K, V> extends TreeMap<K, V> {
 
     @Override
     protected void rebalanceDelete(Position<Entry<K, V>> p) {
-        if (!isInternal(p)) {
-            return;
-        }
-
-        while (!isRoot(p)) {
-            Position<Entry<K, V>> par = parent(p);
-            if (priority(p) > priority(par)) {
-                rotate(p);
-            } else {
-                break;
-            }
-        }
+        // uses treemap delete
     }
 
     public String toString() {
